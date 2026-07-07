@@ -1,10 +1,14 @@
 from src.masks import get_mask_card_number, get_mask_account
 
+
 def mask_account_card(info: str) -> str:
     """
-    Принимает строку с типом и номером карты/счета, возвращает строку с замаскированным номером.
-    Пример: "Visa Platinum 7000792289606361" -> "Visa Platinum 7000 79** **** 6361"
-             "Счет 73654108430135874305" -> "Счет **4305"
+    Принимает строку с типом и номером карты/счета,
+    возвращает строку с замаскированным номером.
+    Пример: "Visa Platinum 7000792289606361" ->
+            "Visa Platinum 7000 79** **** 6361"
+    Пример: "Счет 73654108430135874305" ->
+            "Счет **4305"
     """
     parts = info.rsplit(" ", 1)
     if len(parts) != 2:
@@ -20,6 +24,7 @@ def mask_account_card(info: str) -> str:
         return f"{type_part} {masked}"
     else:
         raise ValueError("Номер должен содержать только цифры")
+
 
 def get_date(date_str: str) -> str:
     """
