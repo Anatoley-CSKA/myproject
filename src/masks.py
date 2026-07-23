@@ -11,3 +11,4 @@ def get_mask_account(account_number: str) -> str:
         raise ValueError("Account number must contain at least 4 digits")
     return f"**{account_number[-4:]}"
 # test comment for PR
+# test comment for PR
