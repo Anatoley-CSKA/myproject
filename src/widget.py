@@ -32,6 +32,7 @@ def get_date(date_str: str) -> str:
     и возвращает "11.03.2024"
     """
     from datetime import datetime
+
     date_part = date_str.split("T")[0]
     dt = datetime.strptime(date_part, "%Y-%m-%d")
     return dt.strftime("%d.%m.%Y")

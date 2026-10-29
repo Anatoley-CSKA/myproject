@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Смартфоны",
+    "description": "Мобильные телефоны",
+    "products": [
+      {
+        "name": "iPhone 15",
+        "description": "Смартфон Apple",
+        "price": 99999.99,
+        "quantity": 10
+      },
+      {
+        "name": "Galaxy S24",
+        "description": "Смартфон Samsung",
+        "price": 89999.50,
+        "quantity": 5
+      }
+    ]
+  },
+  {
+    "name": "Ноутбуки",
+    "description": "Портативные компьютеры",
+    "products": [
+      {
+        "name": "MacBook Pro",
+        "description": "Ноутбук Apple",
+        "price": 249999.00,
+        "quantity": 3
+      }
+    ]
+  }
+]
