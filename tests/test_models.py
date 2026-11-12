@@ -74,3 +74,50 @@ def test_category_count_increments(product_iphone):
     assert Category.category_count == 0
     Category("A", "", [product_iphone])
     assert Category.category_count == 1
+
+
+def test_new_product_creates_object():
+    """new_product создаёт объект Product из словаря."""
+    data = {
+        "name": "iPhone 15",
+        "description": "Смартфон Apple",
+        "price": 99999.99,
+        "quantity": 10,
+    }
+    product = Product.new_product(data)
+
+    assert isinstance(product, Product)
+    assert product.name == "iPhone 15"
+    assert product.description == "Смартфон Apple"
+    assert product.price == 99999.99
+    assert product.quantity == 10
+
+
+def test_new_product_converts_types():
+    """new_product приводит price к float, quantity к int."""
+    data = {
+        "name": "Тест",
+        "description": "Описание",
+        "price": "199.99",
+        "quantity": "5",
+    }
+    product = Product.new_product(data)
+
+    assert isinstance(product.price, float)
+    assert isinstance(product.quantity, int)
+
+
+def test_new_product_with_category():
+    """new_product работает с Category."""
+    from src.models import Category
+
+    data = {
+        "name": "Товар",
+        "description": "Описание",
+        "price": 100.0,
+        "quantity": 1,
+    }
+    product = Product.new_product(data)
+    category = Category("Тест", "Описание", [product])
+
+    assert "Товар" in category.products
