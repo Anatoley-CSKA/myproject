@@ -7,7 +7,7 @@ class Product:
 
     name: str
     description: str
-    price: float
+    __price: float
     quantity: int
 
     def __init__(
@@ -17,11 +17,29 @@ class Product:
         price: float,
         quantity: int,
     ) -> None:
-        """Инициализация товара."""
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price
         self.quantity = quantity
+
+    @property
+    def price(self) -> float:
+        return self.__price
+
+    @price.setter
+    def price(self, new_price: float) -> None:
+        if new_price <= 0:
+            print("Цена не должна быть нулевая или отрицательная")
+            return
+        if new_price < self.__price:
+            answer = input(
+                f"Новая цена {new_price} ниже текущей {self.__price}. "
+                "Понизить цену? (y/n): "
+            )
+            if answer.strip().lower() != "y":
+                print("Понижение цены отменено")
+                return
+        self.__price = new_price
 
     @classmethod
     def new_product(
@@ -29,16 +47,6 @@ class Product:
         product_data: Dict[str, Any],
         existing_products: Optional[List["Product"]] = None,
     ) -> "Product":
-        """Создаёт объект Product, объединяя с существующим при совпадении имени.
-
-        Если товар с таким же именем уже есть в existing_products:
-        - количество складывается
-        - выбирается более высокая цена
-
-        :param product_data: словарь с ключами name, description, price, quantity
-        :param existing_products: список уже существующих товаров
-        :return: объект Product
-        """
         name = product_data["name"]
         description = product_data["description"]
         price = float(product_data["price"])
@@ -75,7 +83,6 @@ class Category:
         description: str,
         products: List[Product],
     ) -> None:
-        """Инициализация категории."""
         self.name = name
         self.description = description
         self.__products = list(products)
@@ -83,13 +90,11 @@ class Category:
         Category.product_count += len(self.__products)
 
     def add_product(self, product: Product) -> None:
-        """Добавляет товар в категорию."""
         self.__products.append(product)
         Category.product_count += 1
 
     @property
     def products(self) -> str:
-        """Возвращает строку с описанием всех товаров."""
         result = ""
         for p in self.__products:
             result += f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт." + chr(10)
