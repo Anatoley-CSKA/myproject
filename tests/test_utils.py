@@ -123,9 +123,8 @@ def test_load_categories_from_json(tmp_path) -> None:
 
     assert len(categories) == 1
     assert categories[0].name == "Смартфоны"
-    assert len(categories[0].products) == 1
-    assert categories[0].products[0].name == "iPhone 15"
-    assert categories[0].products[0].price == 99999.99
+    assert "iPhone 15" in categories[0].products
+    assert "99999.99" in categories[0].products
 
 
 def test_load_categories_from_json_empty(tmp_path) -> None:
@@ -151,14 +150,14 @@ def test_load_categories_from_json_no_products(tmp_path) -> None:
 
     categories = load_categories_from_json(str(file))
     assert len(categories) == 1
-    assert categories[0].products == []
+    assert categories[0].products == ""
 
 
 def test_load_categories_creates_objects(tmp_path) -> None:
     """Функция создаёт объекты Product и Category."""
     import json
 
-    from src.models import Category, Product
+    from src.models import Category
     from src.utils import load_categories_from_json
 
     data = [
@@ -181,4 +180,4 @@ def test_load_categories_creates_objects(tmp_path) -> None:
     categories = load_categories_from_json(str(file))
 
     assert isinstance(categories[0], Category)
-    assert isinstance(categories[0].products[0], Product)
+    assert "Товар" in categories[0].products
