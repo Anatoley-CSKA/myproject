@@ -306,3 +306,40 @@ def test_category_attributes_have_correct_types(category_smartphones: Category) 
     assert type(category_smartphones.name) is str
     assert type(category_smartphones.description) is str
     assert type(category_smartphones.products) is list
+
+
+def test_products_is_private(product_iphone: Product) -> None:
+    """Атрибут __products недоступен напрямую."""
+    category = Category("Тест", "Описание", [product_iphone])
+
+    with pytest.raises(AttributeError):
+        _ = category.__products
+
+
+def test_add_product(product_iphone: Product, product_galaxy: Product) -> None:
+    """Метод add_product добавляет товар."""
+    category = Category("Тест", "Описание", [product_iphone])
+    assert len(category.products) == 1
+
+    category.add_product(product_galaxy)
+    assert len(category.products) == 2
+    assert category.products[1] is product_galaxy
+
+
+def test_add_product_increments_count(
+    product_iphone: Product,
+    product_galaxy: Product,
+) -> None:
+    """add_product увеличивает product_count."""
+    category = Category("Тест", "Описание", [product_iphone])
+    assert Category.product_count == 1
+
+    category.add_product(product_galaxy)
+    assert Category.product_count == 2
+
+
+def test_products_property_returns_list(product_iphone: Product) -> None:
+    """Свойство products возвращает список."""
+    category = Category("Тест", "Описание", [product_iphone])
+    assert isinstance(category.products, list)
+    assert len(category.products) == 1
