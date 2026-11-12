@@ -27,3 +27,4 @@ product = Product(
 )
 print(product.name)   # iPhone 15
 print(product.price)  # 99999.99
+
