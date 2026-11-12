@@ -121,3 +121,96 @@ def test_new_product_with_category():
     category = Category("Тест", "Описание", [product])
 
     assert "Товар" in category.products
+
+
+def test_new_product_without_duplicates():
+    """Новый товар создаётся, если дубликатов нет."""
+    existing = [Product("Galaxy S24", "Samsung", 89999.5, 5)]
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 99999.99,
+        "quantity": 10,
+    }
+
+    product = Product.new_product(data, existing)
+
+    assert product.name == "iPhone 15"
+    assert product.quantity == 10
+    assert product.price == 99999.99
+    assert len(existing) == 1  # не добавился автоматически
+
+
+def test_new_product_merges_quantity():
+    """Количество складывается при совпадении имени."""
+    existing = [Product("iPhone 15", "Apple", 90000.0, 10)]
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 90000.0,
+        "quantity": 5,
+    }
+
+    product = Product.new_product(data, existing)
+
+    assert product.quantity == 15
+    assert product is existing[0]
+
+
+def test_new_product_picks_higher_price():
+    """Выбирается более высокая цена."""
+    existing = [Product("iPhone 15", "Apple", 90000.0, 10)]
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 99999.99,
+        "quantity": 5,
+    }
+
+    product = Product.new_product(data, existing)
+
+    assert product.price == 99999.99
+
+
+def test_new_product_keeps_higher_existing_price():
+    """Если старая цена выше — остаётся она."""
+    existing = [Product("iPhone 15", "Apple", 120000.0, 10)]
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 90000.0,
+        "quantity": 5,
+    }
+
+    product = Product.new_product(data, existing)
+
+    assert product.price == 120000.0
+
+
+def test_new_product_empty_list():
+    """Пустой список — создаётся новый товар."""
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 99999.99,
+        "quantity": 10,
+    }
+
+    product = Product.new_product(data, [])
+
+    assert product.name == "iPhone 15"
+    assert product.quantity == 10
+
+
+def test_new_product_none_list():
+    """None вместо списка — создаётся новый товар."""
+    data = {
+        "name": "iPhone 15",
+        "description": "Apple",
+        "price": 99999.99,
+        "quantity": 10,
+    }
+
+    product = Product.new_product(data, None)
+
+    assert product.name == "iPhone 15"

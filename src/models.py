@@ -1,5 +1,5 @@
 """Модели для интернет-магазина: Product и Category."""
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class Product:
@@ -24,17 +24,38 @@ class Product:
         self.quantity = quantity
 
     @classmethod
-    def new_product(cls, product_data: Dict[str, Any]) -> "Product":
-        """Создаёт объект Product из словаря.
+    def new_product(
+        cls,
+        product_data: Dict[str, Any],
+        existing_products: Optional[List["Product"]] = None,
+    ) -> "Product":
+        """Создаёт объект Product, объединяя с существующим при совпадении имени.
+
+        Если товар с таким же именем уже есть в existing_products:
+        - количество складывается
+        - выбирается более высокая цена
 
         :param product_data: словарь с ключами name, description, price, quantity
+        :param existing_products: список уже существующих товаров
         :return: объект Product
         """
+        name = product_data["name"]
+        description = product_data["description"]
+        price = float(product_data["price"])
+        quantity = int(product_data["quantity"])
+
+        if existing_products:
+            for existing in existing_products:
+                if existing.name == name:
+                    existing.quantity += quantity
+                    existing.price = max(existing.price, price)
+                    return existing
+
         return cls(
-            name=product_data["name"],
-            description=product_data["description"],
-            price=float(product_data["price"]),
-            quantity=int(product_data["quantity"]),
+            name=name,
+            description=description,
+            price=price,
+            quantity=quantity,
         )
 
 
