@@ -1,5 +1,6 @@
 import pytest
-from src.models import Category, Product
+
+from src.models import Category, CategoryIterator, Product
 
 
 @pytest.fixture(autouse=True)
@@ -489,3 +490,100 @@ def test_new_product_different_names_no_merge():
     product = Product.new_product(data, existing)
     assert product.name == "iPhone 15"
     assert existing[0].quantity == 5  # не изменился
+
+
+# ============================================================
+# Тесты для Product.__add__
+# ============================================================
+
+def test_add_products_returns_total_stock_value():
+    """a + b = price_a * qty_a + price_b * qty_b."""
+    a = Product("Товар A", "Описание", 100, 10)
+    b = Product("Товар B", "Описание", 200, 2)
+    assert a + b == 1400
+
+
+def test_add_returns_number():
+    """Результат — число, а не новый Product."""
+    a = Product("Товар A", "Описание", 100, 10)
+    b = Product("Товар B", "Описание", 200, 2)
+    result = a + b
+    assert isinstance(result, (int, float))
+    assert not isinstance(result, Product)
+
+
+def test_add_with_zero_quantity():
+    """Товар с нулевым остатком не добавляет стоимости."""
+    a = Product("Товар A", "Описание", 100, 10)
+    b = Product("Товар B", "Описание", 200, 0)
+    assert a + b == 1000
+
+
+def test_add_same_product():
+    """a + a = 2 * price * qty."""
+    a = Product("Товар A", "Описание", 100, 10)
+    assert a + a == 2000
+
+
+def test_add_with_non_product_raises_type_error():
+    """Сложение Product с не-Product вызывает TypeError."""
+    a = Product("Товар A", "Описание", 100, 10)
+    with pytest.raises(TypeError):
+        a + "строка"
+    with pytest.raises(TypeError):
+        a + 42
+
+
+# ============================================================
+# Тесты для CategoryIterator
+# ============================================================
+
+def test_category_iterator_returns_products():
+    """Итератор возвращает товары категории по одному."""
+    p1 = Product("Яблоко", "Свежее", 80, 15)
+    p2 = Product("Груша", "Спелая", 120, 8)
+    cat = Category("Фрукты", "Свежие", [p1, p2])
+
+    result = list(CategoryIterator(cat))
+
+    assert result == [p1, p2]
+
+
+def test_category_iterator_empty_category():
+    """Итератор по пустой категории сразу завершается."""
+    cat = Category("Пусто", "Нет товаров", [])
+    assert list(CategoryIterator(cat)) == []
+
+
+def test_category_iterator_is_iterable():
+    """Итератор можно использовать в for."""
+    p1 = Product("Яблоко", "Свежее", 80, 15)
+    p2 = Product("Груша", "Спелая", 120, 8)
+    cat = Category("Фрукты", "Свежие", [p1, p2])
+
+    names = [product.name for product in CategoryIterator(cat)]
+
+    assert names == ["Яблоко", "Груша"]
+
+
+def test_category_iterator_does_not_modify_category():
+    """Перебор не меняет список товаров категории."""
+    p1 = Product("Яблоко", "Свежее", 80, 15)
+    cat = Category("Фрукты", "Свежие", [p1])
+
+    list(CategoryIterator(cat))
+    list(CategoryIterator(cat))
+
+    assert len(cat.products_list) == 1
+
+
+def test_category_iterator_stops_iteration():
+    """После StopIteration итератор продолжает бросать StopIteration."""
+    cat = Category("Фрукты", "Свежие", [Product("Яблоко", "Свежее", 80, 15)])
+    iterator = CategoryIterator(cat)
+
+    assert next(iterator) is not None
+    with pytest.raises(StopIteration):
+        next(iterator)
+    with pytest.raises(StopIteration):
+        next(iterator)

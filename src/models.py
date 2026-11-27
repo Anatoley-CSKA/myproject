@@ -25,7 +25,7 @@ class Product:
     def __str__(self) -> str:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
-    __repr__ = __str__   # удобно для отладки
+    __repr__ = __str__
 
     def __add__(self, other: "Product") -> float:
         if not isinstance(other, Product):
@@ -111,6 +111,29 @@ class Category:
     def products(self) -> str:
         return "\n".join(str(p) for p in self.__products)
 
+    @property
+    def products_list(self) -> List[Product]:
+        """Список товаров категории (объекты Product)."""
+        return list(self.__products)
+
+
+class CategoryIterator:
+    """Итератор для перебора товаров одной категории."""
+
+    def __init__(self, category: Category) -> None:
+        self._products = category.products_list
+        self._index = 0
+
+    def __iter__(self) -> "CategoryIterator":
+        return self
+
+    def __next__(self) -> Product:
+        if self._index >= len(self._products):
+            raise StopIteration
+        product = self._products[self._index]
+        self._index += 1
+        return product
+
 
 # === Проверка ===
 if __name__ == "__main__":
@@ -121,12 +144,9 @@ if __name__ == "__main__":
     cat.add_product(Product("Апельсин", "Сочный", 90, 20))
 
     print(p1)
-    # Яблоко, 80 руб. Остаток: 15 шт.
-
     print(cat)
-    # Фрукты, количество продуктов: 43 шт.
-
     print(cat.products)
-    # Яблоко, 80 руб. Остаток: 15 шт.
-    # Груша, 120 руб. Остаток: 8 шт.
-    # Апельсин, 90 руб. Остаток: 20 шт.
+
+    print("--- Итерация ---")
+    for product in CategoryIterator(cat):
+        print(product)
