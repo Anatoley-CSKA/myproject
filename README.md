@@ -58,3 +58,37 @@ Product.new_product(product_data, existing_products) создаёт товар �
 poetry run pytest --cov=src --cov-report=term-missing
 
 Покрытие всех модулей — 100%.
+
+## ➕ Сложение товаров
+
+У класса `Product` реализован магический метод `__add__`, который позволяет
+получать общую стоимость товаров на складе:
+
+```python
+from src.models import Product
+
+a = Product("Товар A", "Описание", 100, 10)   # 100 × 10 = 1000
+b = Product("Товар B", "Описание", 200, 2)    # 200 × 2  = 400
+
+total = a + b
+print(total)   # 1400
+
+---
+
+## 🔄 Перебор товаров категории
+
+Для итерации по товарам одной категории добавлен класс `CategoryIterator`.
+
+```python
+from src.models import Category, CategoryIterator, Product
+
+category = Category("Фрукты", "Свежие", [
+    Product("Яблоко", "Свежее", 80, 15),
+    Product("Груша", "Спелая", 120, 8),
+])
+
+for product in CategoryIterator(category):
+    print(product)
+```
+
+Также у `Category` появилось свойство `products_list`, возвращающее список объектов `Product`.
