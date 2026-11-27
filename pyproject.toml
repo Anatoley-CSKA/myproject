@@ -36,3 +36,10 @@ ignore_missing_imports = true
 filterwarnings = [
     "ignore::RuntimeWarning",
 ]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

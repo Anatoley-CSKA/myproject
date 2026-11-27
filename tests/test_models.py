@@ -587,3 +587,17 @@ def test_category_iterator_stops_iteration():
         next(iterator)
     with pytest.raises(StopIteration):
         next(iterator)
+
+
+def test_category_str_returns_total_quantity():
+    """__str__ категории — общее количество всех товаров."""
+    p1 = Product("Яблоко", "Свежее", 80, 15)
+    p2 = Product("Груша", "Спелая", 120, 8)
+    cat = Category("Фрукты", "Свежие", [p1, p2])
+    assert str(cat) == "Фрукты, количество продуктов: 23 шт."
+
+
+def test_category_str_empty():
+    """__str__ пустой категории — 0 шт."""
+    cat = Category("Пусто", "Нет товаров", [])
+    assert str(cat) == "Пусто, количество продуктов: 0 шт."
